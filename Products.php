@@ -24,7 +24,7 @@ class Products {
   private static function getQuery($key) {
     if (isset($_GET[$key])) return htmlspecialchars($_GET[$key]);
   }
-  
+
   /*****************************
    * Set limit
   ****************************** */
@@ -43,11 +43,12 @@ class Products {
   ****************************** */
   private static function getLimit() {
     $limit = self::getQuery('limit');
-    if ($limit && (!is_numeric($limit) || ( $limit > 20 || $limit < 1 ))) {
+    $int = filter_var($limit, FILTER_VALIDATE_INT);
+    if (( $limit || $int === 0 ) && ( !$int || $int > 20 || $int < 1 )) {
       $error = array('Error' => 'Limit needs to be set to a number between 1 and 20');
       array_push(self::$errors, $error);
     } else {
-      self::setLimit(intval($limit));
+      self::setLimit($int);
     }
   }
 
