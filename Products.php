@@ -1,27 +1,30 @@
 <?php
 
 class Products {
-  private static $limit;
+  private static $limit = 20;
   private static $category;
   private static $categories = array('men', 'women', 'jewelry', 'electronics');
   private static $errors = array();
 
-  
+  /*****************************
+   * Main method:
+   * - Look for queries / errors
+   * - Render errors or product data
+  ****************************** */
   public static function Main($products) {
-    $limit = self::getLimit();
-    $category = self::getCategory();
-    if ($limit) self::setLimit($limit);
-    if ($category) self::setLimit($category);
+    self::getLimit();
+    self::getCategory();
     if (self::$errors) self::renderData(self::$errors);
-    else self::renderData($products);
-
+    else self::renderData(self::prepareProductsArray($products));
   }
+
   /*****************************
    * Get value from querystring
   ****************************** */
   private static function getQuery($key) {
     if (isset($_GET[$key])) return htmlspecialchars($_GET[$key]);
   }
+  
   /*****************************
    * Set limit
   ****************************** */
@@ -44,7 +47,7 @@ class Products {
       $error = array('Error' => 'Limit needs to be set to a number between 1 and 20');
       array_push(self::$errors, $error);
     } else {
-      self::setLimit($limit);
+      self::setLimit(intval($limit));
     }
   }
 
@@ -61,11 +64,30 @@ class Products {
     }
   }
 
+  /**********************************************
+   * Filter products array by queried category
+  ********************************************** */
+  private static function filterArray($products) {
+    $filtered = array_filter($products, function($product) {
+      return $product['category'] === self::$category;
+    });
+    return $filtered;
+  }
+
   /****************************************
-   * Render products array in json format
+   * Prepare products array for rendering:
+   * - shuffle - filter - slice
   ***************************************** */
-  public static function renderData($array) {
-    $products = $array;
-    echo json_encode($products, JSON_UNESCAPED_UNICODE);
+  private static function prepareProductsArray($products) {
+    shuffle($products);
+    if (self::$category) $products = self::filterArray($products);
+    return array_slice($products, 0, self::$limit);
+  }
+
+  /****************************************
+   * Render data in json format
+  ***************************************** */
+  private static function renderData($data) {
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
   }
 }
