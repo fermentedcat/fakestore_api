@@ -56,8 +56,8 @@ class Products {
    * Get category and validate
   ****************************** */
   private static function getCategory() {
-    $category = self::getQuery('category');
-    if ($category && (!in_array($category, self::$categories))) {
+    $category = strtolower(self::getQuery('category'));
+    if ($category && !in_array($category, self::$categories)) {
       $error = array('Error' => 'Valid categories are: ' . join(', ', self::$categories));
       array_push(self::$errors, $error);
     } else {
