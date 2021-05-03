@@ -44,10 +44,12 @@ class Products {
   private static function getLimit() {
     $limit = self::getQuery('limit');
     $int = filter_var($limit, FILTER_VALIDATE_INT);
+    echo $limit;
+    echo $int;
     if (( $limit || $int === 0 ) && ( !$int || $int > 20 || $int < 1 )) {
       $error = array('Error' => 'Limit needs to be set to a number between 1 and 20');
       array_push(self::$errors, $error);
-    } else {
+    } else if ($int) {
       self::setLimit($int);
     }
   }
