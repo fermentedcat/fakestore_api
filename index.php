@@ -11,8 +11,8 @@ header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header("Referrer-Policy: no-referrer");
 
-include('productData.php');
+require_once('Products.php');
+require_once('productData.php');
 
-shuffle($products);
+Products::main($products);
 
-echo json_encode($products, JSON_UNESCAPED_UNICODE);
