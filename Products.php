@@ -11,7 +11,7 @@ class Products {
    * - Look for queries / errors
    * - Render errors or product data
   ****************************** */
-  public static function Main($products) {
+  public static function main($products) {
     self::getLimit();
     self::getCategory();
     if (self::$errors) self::renderData(self::$errors);
