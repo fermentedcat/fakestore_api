@@ -19,13 +19,6 @@ class Products {
   }
 
   /*****************************
-   * Get value from querystring
-  ****************************** */
-  private static function getQuery($key) {
-    if (isset($_GET[$key])) return htmlspecialchars($_GET[$key]);
-  }
-
-  /*****************************
    * Set limit
   ****************************** */
   private static function setLimit($limit) {
@@ -39,18 +32,22 @@ class Products {
   }
 
   /*****************************
+   * Get value from querystring
+  ****************************** */
+  private static function getQuery($key) {
+    if (isset($_GET[$key])) return htmlspecialchars($_GET[$key]);
+  }
+
+  /*****************************
    * Get limit and validate
   ****************************** */
   private static function getLimit() {
     $limit = self::getQuery('limit');
-    $int = filter_var($limit, FILTER_VALIDATE_INT);
-    echo $limit;
-    echo $int;
-    if (( $limit || $int === 0 ) && ( !$int || $int > 20 || $int < 1 )) {
+    if (( $limit || $limit === '0' ) && ( !$limit || $limit > 20 || $limit < 1 )) {
       $error = array('Error' => 'Limit needs to be set to a number between 1 and 20');
       array_push(self::$errors, $error);
-    } else if ($int) {
-      self::setLimit($int);
+    } else if ($limit) {
+      self::setLimit($limit);
     }
   }
 
@@ -59,7 +56,7 @@ class Products {
   ****************************** */
   private static function getCategory() {
     $category = strtolower(self::getQuery('category'));
-    if ($category && !in_array($category, self::$categories)) {
+    if (($category || $category ==='0') && !in_array($category, self::$categories)) {
       $error = array('Error' => 'Valid categories are: ' . join(', ', self::$categories));
       array_push(self::$errors, $error);
     } else {
